@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LCJ Quiz</title>
+<style>
+body {
+  font-family: "Roboto Mono", monospace;
+  font-size: 20px;
+  background-image: url('https://i0.wp.com/bestanimations.com/Computers/funny-computer-animated-gif-24.gif');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+#quiz {
+  display: none;
+}
+
+#start, #submit {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#progress {
+  margin-top: 20px;
+}
+
+.question {
+  font-size: 18px;
+  margin-bottom: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 10px;
+}
+
+.answers div {
+  margin-bottom: 5px;
+  text-align: left;
+}
+
+.neon {
+  color: #00008b; /* Dark blue color */
+  text-shadow: 0 0 5px #00008b, 0 0 10px #00008b, 0 0 15px #00008b, 0 0 20px #00008b, 0 0 30px #00008b, 0 0 40px #00008b, 0 0 50px #00008b, 0 0 75px #00008b;
+  animation: neon-glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes neon-glow {
+  from {
+    opacity: 0.5;
+  }
+  to {
+    opacity: 1;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1 class="neon">LCJ Quiz</h1>
+  <div id="start">Start Game</div>
+  <div id="quiz">
+    <div id="progress"></div>
+    <div id="question" class="question"></div>
+    <div id="answers" class="answers"></div>
+    <div id="submit">Next Question</div>
+  </div>
+  <div id="results"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti"></script>
+
+<script>
+const quizContainer = document.getElementById('quiz');
+const resultsContainer = document.getElementById('results');
+const submitButton = document.getElementById('submit');
+const startButton = document.getElementById('start');
+const progressContainer = document.getElementById('progress');
+const questionContainer = document.getElementById('question');
+const answersContainer = document.getElementById('answers');
+
+let currentQuestionIndex = 0;
+let correctAnswers = 0;
+
+function buildQuiz() {
+  showQuestion(currentQuestionIndex);
+  startButton.style.display = 'none';
+  quizContainer.style.display = 'block';
+  updateProgress();
+}
+
+function showQuestion(index) {
+  const currentQuestion = myQuestions[index];
+  const answers = [];
+
+  for (const letter in currentQuestion.answers) {
+    answers.push(
+      `<div>
+        <input type="radio" name="question${index}" value="${letter}">
+        <label>${letter} : ${currentQuestion.answers[letter]}</label>
+      </div>`
+    );
+  }
+
+  questionContainer.innerHTML = currentQuestion.question;
+  answersContainer.innerHTML = answers.join('');
+}
+
+function updateProgress() {
+  progressContainer.innerText = `Question ${currentQuestionIndex + 1} of ${myQuestions.length}`;
+}
+
+function showResults() {
+  quizContainer.style.display = 'none';
+  resultsContainer.innerHTML = `You answered ${correctAnswers} out of ${myQuestions.length} questions correctly.<br><br>Thank you for playing!`;
+  resultsContainer.style.display = 'block';
+  // Display bigger confetti at the end of the game
+  confetti({
+    particleCount: 200, // Increase the number of confetti particles
+    spread: 200 // Increase the spread of confetti particles
+  });
+}
+
+submitButton.addEventListener('click', () => {
+  const selectedOption = document.querySelector(`input[name="question${currentQuestionIndex}"]:checked`);
+
+  if (!selectedOption) {
+    alert('Please select an option');
+    return;
+  }
+
+  const userAnswer = selectedOption.value;
+  const currentQuestion = myQuestions[currentQuestionIndex];
+
+  if (userAnswer === currentQuestion.correctAnswer) {
+    correctAnswers++;
+  }
+  
+  currentQuestionIndex++;
+  if (currentQuestionIndex < myQuestions.length) {
+    showQuestion(currentQuestionIndex);
+    updateProgress();
+  } else {
+    showResults();
+  }
+});
+
+startButton.addEventListener('click', () => {
+  buildQuiz();
+});
+
+const myQuestions = [
+  {
+    question: "Who's The Python King",
+    answers: {
+      a: "Nurbek J.",
+      b: "Mohamad R.",
+      c: "Kobe LW.",
+      d: "TY R.",
+    },
+    correctAnswer: "d"
+  },
+  {
+    question: "Who Sends The Most Emails To Deo",
+    answers: {
+      a: "Rohit H.",
+      b: "Brauleo L.",
+      c: "Tommy W.",
+      d: "Jahaziel R.",
+    },
+    correctAnswer: "c"
+  },
+  {
+    question: "Who's The Python Queen?",
+    answers: {
+      a: "Rosa M.",
+      b: "Ama OA.",
+      c: "Celia C.",
+      d: "Clara E.",
+    },
+    correctAnswer: "c"
+  },
+  {
+    question: "Who Abuses Text Shadow In CSS?",
+    answers: {
+      a: "Jonathan DLC.",
+      b: "Jael B.",
+      c: "Sean JR.",
+      d: "Nia D.",
+    },
+    correctAnswer: "b"
+  },
+  {
+    question: "Who Drinks The Most Celsius In LCJ?",
+    answers: {
+      a: "Jeffrey H.",
+      b: "Jael B.",
+      c: "Sean JR.",
+      d: "Vincent M.",
+    },
+    correctAnswer: "a"
+  },
+  {
+    question: "Who Has The Best Car In LCJ?",
+    answers: {
+      a: "Kobe LW.",
+      b: "Jovens S.",
+      c: "Jeffrey H.",
+      d: "Alfred C.",
+    },
+    correctAnswer: "d"
+  },
+  {
+    question: "Who Has The Most Amount Of Experience?",
+    answers: {
+      a: "Nurbek J.",
+      b: "Stephen O.",
+      c: "Nia D.",
+      d: "Tommy W.",
+    },
+    correctAnswer: "c"
+  },
+  {
+    question: "Who Is The Best Public Speaker?",
+    answers: {
+      a: "Nurbek J.",
+      b: "Torell B.",
+      c: "Jael B.",
+      d: "Celia C.",
+    },
+    correctAnswer: "b"
+  }
+];
+</script>
+
+</body>
+</html>
